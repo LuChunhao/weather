@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/id_cl_root_login"
+    style="@style/style_cl_common"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/id_iv_login_logo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="80dp"
+        android:background="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/applogo" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/id_nsv_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:fillViewport="true"
+        android:scrollbarThumbVertical="@android:color/transparent"
+        android:scrollbars="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/id_iv_login_logo">
+
+        <LinearLayout
+            android:id="@+id/id_cl_content_login"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/id_iv_icon_user"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/icon_user"/>
+
+                <EditText
+                    android:id="@+id/id_et_user_account"
+                    style="@style/style_et_account_login"
+                    android:hint="请输入用户名" />
+
+                <ImageView
+                    android:id="@+id/id_iv_clean_account"
+                    style="@style/style_iv_clear_account_login"
+                    app:layout_constraintBottom_toBottomOf="@id/id_et_user_account"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/id_et_user_account" />
+
+            </LinearLayout>
+
+
+            <View
+                android:id="@+id/id_v_line_account"
+                style="@style/style_v_line_login"/>
+
+            <LinearLayout
+                android:id="@+id/ll_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp">
+
+                <ImageView
+                    android:id="@+id/id_iv_icon_pwd"
+                    style="@style/style_left_icon_login"
+                    android:src="@drawable/icon_pw" />
+
+                <EditText
+                    android:id="@+id/id_et_user_pwd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="请输入密码"
+                    android:inputType="textPassword"
+                    android:padding="3dp"
+                    android:textColor="#999999"
+                    android:textColorHint="#999999" />
+
+                <ImageView
+                    android:id="@+id/id_iv_clean_pwd"
+                    style="@style/style_iv_clear_account_login" />
+
+                <CheckBox
+                    android:id="@+id/id_cb_pwd"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/selector_pwd_login"
+                    android:button="@null" />
+
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/id_v_line_pwd"
+                style="@style/style_v_line_login"
+                app:layout_constraintTop_toBottomOf="@id/ll_pwd" />
+
+            <TextView
+                android:id="@+id/id_tv_forget_pwd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:text="忘记密码"
+                android:textColor="#b0b8b2"
+                android:textSize="11sp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/id_v_line_pwd" />
+
+            <Button
+                android:id="@+id/id_btn_login"
+                style="@style/style_btn_login"
+                android:text="登 录" />
+
+            <Button
+                android:id="@+id/id_btn_register"
+                style="@style/style_btn_login"
+                android:background="@drawable/shape_bg_btn_register"
+                android:text="注 册"
+                android:textColor="#00aaff" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>

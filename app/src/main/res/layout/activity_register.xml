@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/id_cl_root_register"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        app:title="注册"
+        app:titleTextColor="#ffffff">
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/id_iv_register_logo"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="50dp"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/applogo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/id_iv_icon_user"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/icon_user" />
+
+            <EditText
+                android:id="@+id/id_et_user_account"
+                style="@style/style_et_account_login"
+                android:hint="请输入用户名" />
+
+            <ImageView
+                android:id="@+id/id_iv_clean_account"
+                style="@style/style_iv_clear_account_login"
+                app:layout_constraintBottom_toBottomOf="@id/id_et_user_account"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/id_et_user_account" />
+
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/id_v_line_account"
+            style="@style/style_v_line_login"
+            app:layout_constraintTop_toBottomOf="@id/id_et_user_account" />
+
+        <LinearLayout
+            android:id="@+id/ll_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/id_iv_icon_pwd"
+                style="@style/style_left_icon_login"
+                android:src="@drawable/icon_pw" />
+
+            <EditText
+                android:id="@+id/id_et_user_pwd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入密码"
+                android:inputType="textPassword"
+                android:padding="3dp"
+                android:textColor="#999999"
+                android:textColorHint="#999999" />
+
+            <ImageView
+                android:id="@+id/id_iv_clean_pwd"
+                style="@style/style_iv_clear_account_login" />
+
+            <CheckBox
+                android:id="@+id/id_cb_pwd"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/selector_pwd_login"
+                android:button="@null" />
+
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/id_v_line_pwd"
+            style="@style/style_v_line_login" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/id_iv_icon_pwd_sure"
+                style="@style/style_left_icon_login"
+                android:src="@drawable/icon_pw" />
+
+            <EditText
+                android:id="@+id/id_et_user_pwd_sure"
+                style="@style/style_et_account_login"
+                android:hint="请再次输入密码"
+                android:inputType="textPassword" />
+
+            <ImageView
+                android:id="@+id/id_iv_clean_pwd_sure"
+                style="@style/style_iv_clear_account_login" />
+
+            <CheckBox
+                android:id="@+id/id_cb_pwd_sure"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/selector_pwd_login"
+                android:button="@null" />
+
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/id_v_line_pwd_sure"
+            style="@style/style_v_line_login" />
+
+        <Button
+            android:id="@+id/id_btn_register"
+            style="@style/style_btn_login"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/shape_bg_btn_login"
+            android:text="注 册"
+            android:textColor="#ffffff" />
+
+    </LinearLayout>
+</LinearLayout>
