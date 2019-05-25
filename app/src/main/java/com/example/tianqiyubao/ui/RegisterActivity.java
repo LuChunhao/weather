@@ -236,6 +236,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                     SharePreferenceUtil.putString(userName, userPwd); // 保存用户名密码
                     SharePreferenceUtil.putBoolean("isLogin", true);
+                    SharePreferenceUtil.putString("userName", userName);// 保存当前用户名
                     startActivity(new Intent(RegisterActivity.this, WelcomeGuideActivity.class));
                     finish();
                 }

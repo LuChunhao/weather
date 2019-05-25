@@ -215,6 +215,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
                     SharePreferenceUtil.putString(userName, userPwd); // 保存用户名密码
                     SharePreferenceUtil.putBoolean("isLogin", true);
+                    SharePreferenceUtil.putString("userName", userName);// 保存当前用户名
                     startActivity(new Intent(LoginActivity.this, WelcomeGuideActivity.class));
                     finish();
                 } else if (!TextUtils.isEmpty(pwd) && !userPwd.equals(pwd)){

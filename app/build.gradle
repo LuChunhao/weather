@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.greenrobot.greendao'
 android {
 //    sourceSets {
 //        main {
@@ -51,6 +51,13 @@ android {
 //            signingConfig signingConfigs.debug
 //        }
     }
+
+    // greenDao 配置信息
+    greendao {
+        schemaVersion 1 // 数据库版本号
+        daoPackage 'com.example.tianqiyubao.database.gen'
+        targetGenDir 'src/main/java/'
+    }
 }
 
 
@@ -69,4 +76,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 //    compile 'com.sina.weibo.sdk:core:2.0.3:openDefaultRelease@aar'
     compile 'com.android.support:design:25.4.0'
+    compile 'org.greenrobot:greendao:3.2.0'
 }

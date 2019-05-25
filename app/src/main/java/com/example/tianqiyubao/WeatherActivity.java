@@ -17,16 +17,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -34,20 +36,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.tianqiyubao.database.GreenDaoManager;
+import com.example.tianqiyubao.database.entity.CityEntity;
+import com.example.tianqiyubao.database.gen.CityEntityDao;
 import com.example.tianqiyubao.gson.Forecast;
 import com.example.tianqiyubao.gson.Weather;
 import com.example.tianqiyubao.service.AutoUpdateService;
+import com.example.tianqiyubao.ui.FavoriteListActivity;
+import com.example.tianqiyubao.ui.LoginActivity;
+import com.example.tianqiyubao.ui.VerticalSwipeRefreshLayout;
 import com.example.tianqiyubao.util.HttpUtil;
+import com.example.tianqiyubao.util.SharePreferenceUtil;
 import com.example.tianqiyubao.util.Utility;
-import com.example.tianqiyubao.weiboshare.Constants;
-//import com.sina.weibo.sdk.WbSdk;
-//import com.sina.weibo.sdk.api.ImageObject;
-//import com.sina.weibo.sdk.api.TextObject;
-//import com.sina.weibo.sdk.api.WebpageObject;
-//import com.sina.weibo.sdk.api.WeiboMultiMessage;
-//import com.sina.weibo.sdk.auth.AuthInfo;
-//import com.sina.weibo.sdk.share.WbShareCallback;
-//import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -59,9 +59,12 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
+import org.litepal.util.LogUtil;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -69,7 +72,15 @@ import okhttp3.Response;
 
 import static com.example.tianqiyubao.R.id.max_text;
 import static com.tencent.mm.sdk.platformtools.Util.bmpToByteArray;
-import static com.tencent.mm.sdk.platformtools.Util.stringsToList;
+
+//import com.sina.weibo.sdk.WbSdk;
+//import com.sina.weibo.sdk.api.ImageObject;
+//import com.sina.weibo.sdk.api.TextObject;
+//import com.sina.weibo.sdk.api.WebpageObject;
+//import com.sina.weibo.sdk.api.WeiboMultiMessage;
+//import com.sina.weibo.sdk.auth.AuthInfo;
+//import com.sina.weibo.sdk.share.WbShareCallback;
+//import com.sina.weibo.sdk.share.WbShareHandler;
 
 /**
  * Created by dell on 2017/5/22.
@@ -78,12 +89,12 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
     public DrawerLayout drawerLayout;
 
-    public SwipeRefreshLayout swipeRefresh;
+    public VerticalSwipeRefreshLayout swipeRefresh;
 
     private ScrollView weatherLayout;
 
 
-//    private TextView titleUpdateTime;
+    private TextView titleUpdateTime;
 
     private TextView degreeText;
 
@@ -103,7 +114,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
     private ImageView bingPicImg;
 
-    private String mWeatherId;
+    private String weatherId;
 
     private ImageView sharetowechat;
 
@@ -134,6 +145,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
     int flag = 0;
     private ImageView mSharedBtn;
     private ActionBar actionBar;
+    private String selectedCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +167,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         api.registerApp(APP_ID);
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
         weatherLayout = (ScrollView) findViewById(R.id.weather_layout);
-//        titleUpdateTime = (TextView) findViewById(R.id.title_update_time);
+        titleUpdateTime = (TextView) findViewById(R.id.title_update_time);
         degreeText = (TextView) findViewById(R.id.degree_text);
         weatherInfoText = (TextView) findViewById(R.id.weather_info_text);
         forecastLayout = (LinearLayout) findViewById(R.id.forecast_layout);
@@ -164,7 +176,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         comfortText = (TextView) findViewById(R.id.comfort_text);
         carWashText = (TextView) findViewById(R.id.car_wash_text);
         sportText = (TextView) findViewById(R.id.sport_text);
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefresh = (VerticalSwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         sharetowechat = (ImageView) findViewById(R.id.shareto_wechat);
@@ -175,8 +187,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
         initToolbar(tool_bar);
 
-        final String weatherId;
-
+        swipeRefresh.setScrollUpChild(weatherLayout);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather", null);
@@ -192,11 +203,12 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
             weatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
             String weatherId1 = getIntent().getStringExtra("weather_id");
+            selectedCity = getIntent().getStringExtra("CityName");
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId1);
         } else {
             // 无缓存时去服务器查询天气
-
+            selectedCity = getIntent().getStringExtra("CityName");
             weatherId = getIntent().getStringExtra("weather_id");
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
@@ -252,6 +264,47 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
      */
     public void initToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        //设置移除图片  如果不设置会默认使用系统灰色的图标
+        //toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.icon_action));
+        //填充menu
+        toolbar.inflateMenu(R.menu.toolbar_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.item_favorite:
+                        List<CityEntity> list = GreenDaoManager.getInstance().getSession().getCityEntityDao()
+                                .queryBuilder().where(CityEntityDao.Properties.WeatherId.eq(weatherId))
+                                .list();
+                        // CN101010200
+                        CityEntity cityEntity = new CityEntity();
+                        cityEntity.setId(list.size() == 0 ? null : list.get(0).getId());
+                        cityEntity.setCityName(selectedCity);
+                        cityEntity.setWeatherId(weatherId);
+                        cityEntity.setUserName(SharePreferenceUtil.getString("userName", ""));
+                        GreenDaoManager.getInstance().getSession().getCityEntityDao().save(cityEntity);
+                        Toast.makeText(WeatherActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.item_favorite_list:
+                        startActivityForResult(new Intent(WeatherActivity.this, FavoriteListActivity.class), 123);
+                        break;
+                    case R.id.item_logout:
+                        SharePreferenceUtil.remove("isLogin");
+                        SharePreferenceUtil.remove("userName");
+                        startActivity(new Intent(WeatherActivity.this, LoginActivity.class));
+                        finish();
+                        break;
+                }
+                return true;
+            }
+        });
+        //设置点击事件
         actionBar = getSupportActionBar();
 
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -274,6 +327,17 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return super.onMenuOpened(featureId, menu);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -338,6 +402,11 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
             finish();
 
+        }
+
+        if (requestCode == 123 && resultCode == RESULT_OK && null != data) {
+            weatherId = data.getStringExtra("weatherId");
+            requestWeather(data.getStringExtra("weatherId"));
         }
     }
 
@@ -561,6 +630,10 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         mTencent.shareToQQ(WeatherActivity.this, params, new WeatherActivity.BaseUiListener1());
     }
 
+    public void setCityName(String selectedCity) {
+        this.selectedCity = selectedCity;
+    }
+
     //回调接口  (成功和失败的相关操作)
     private class BaseUiListener1 implements IUiListener {
         @Override
@@ -584,7 +657,13 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
     /**
      * 根据天气id请求城市天气信息。
      */
-    public void requestWeather(final String weatherId) {
+    public void requestWeather(String weatherId) {
+        if (TextUtils.isEmpty(weatherId)) {
+            weatherId = "CN101010200";
+            selectedCity = "海淀";
+        }
+        this.weatherId = weatherId;
+        Log.e("lch---", "weatherId===" + weatherId);
         String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=ea62e3b606e3404fa0a5475f17c0f00c";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -663,7 +742,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.more.info;
         actionBar.setTitle(cityName);
-//        titleUpdateTime.setText(updateTime);
+        titleUpdateTime.setText(updateTime);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();

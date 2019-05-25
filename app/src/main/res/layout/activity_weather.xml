@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <com.example.tianqiyubao.ui.VerticalSwipeRefreshLayout
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -34,6 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/colorPrimary"
+                    app:navigationIcon="@drawable/ic_home_white"
                     android:elevation="5dp"
                     android:theme="@style/ThemeToolBar"
                     app:layout_collapseMode="pin"
@@ -65,7 +66,7 @@
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </com.example.tianqiyubao.ui.VerticalSwipeRefreshLayout>
 
         <fragment
             android:id="@+id/choose_area_fragment"
